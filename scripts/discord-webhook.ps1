@@ -20,6 +20,7 @@ function Get-Environment {
         "RequesterId" = "AZ_DEVOPS_REQUESTER_ID"
         "QueuedBy" = "AZ_DEVOPS_QUEUED_BY"
         "QueuedById" = "AZ_DEVOPS_QUEUED_BY_ID"
+        "CommitLink" = "AZ_DEVOPS_COMMIT_LINK"
     }
 
     $private:EnvVars = @{}
@@ -56,7 +57,7 @@ $DiscordData = @{
                 }
                 @{
                     "name" = "Commit Link"
-                    "value" = "https://github.com/RaenonX-InfinityNikki/inf-nikki-ui-core/commit/$buildHash"
+                    "value" = $Environment.CommitLink
                     "inline" = "false"
                 }
             )
