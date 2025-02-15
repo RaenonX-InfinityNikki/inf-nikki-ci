@@ -2,7 +2,6 @@
 $ErrorActionPreference = "Stop"
 
 $BuildId = $(git show -s --format="%h-%cI").Trim().Replace(":", "-")
-$BuildHash = $(git show -s --format="%H").Trim()
 $BuildStatusColor = @{
     "Canceled" = [convert]::ToString("0x06B6D4", 10)
     "Succeeded" = [convert]::ToString("0x22C55E", 10)
@@ -21,13 +20,16 @@ function Get-Environment {
         "QueuedBy" = "AZ_DEVOPS_QUEUED_BY"
         "QueuedById" = "AZ_DEVOPS_QUEUED_BY_ID"
         "CommitLink" = "AZ_DEVOPS_COMMIT_LINK"
+        "CommitLinkRoot" = "AZ_DEVOPS_COMMIT_LINK_ROOT"
     }
 
     $private:EnvVars = @{}
 
-    foreach ($private:EnvVarEntry in $private:EnvVarMap.GetEnumerator()) {
+    try {
         $private:EnvVarName = $private:EnvVarEntry.Value
         $private:EnvVars[$private:EnvVarEntry.Name] = (Get-Item -Path env:/$private:EnvVarName).Value
+    } catch {
+        $private:EnvVars[$private:EnvVarEntry.Name] = $null
     }
 
     return $private:EnvVars
@@ -57,7 +59,7 @@ $DiscordData = @{
                 }
                 @{
                     "name" = "Commit Link"
-                    "value" = $Environment.CommitLink
+                    "value" = $Environment.CommitLink ?? "$($Environment.CommitLinkRoot)/$($(git show -s --format="%H").Trim())"
                     "inline" = "false"
                 }
             )
