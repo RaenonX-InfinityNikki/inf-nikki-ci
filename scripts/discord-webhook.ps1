@@ -25,11 +25,13 @@ function Get-Environment {
 
     $private:EnvVars = @{}
 
-    try {
-        $private:EnvVarName = $private:EnvVarEntry.Value
-        $private:EnvVars[$private:EnvVarEntry.Name] = (Get-Item -Path env:/$private:EnvVarName).Value
-    } catch {
-        $private:EnvVars[$private:EnvVarEntry.Name] = $null
+    foreach ($private:EnvVarEntry in $private:EnvVarMap.GetEnumerator()) {
+        try {
+            $private:EnvVarName = $private:EnvVarEntry.Value
+            $private:EnvVars[$private:EnvVarEntry.Name] = (Get-Item -Path env:/$private:EnvVarName).Value
+        } catch {
+            $private:EnvVars[$private:EnvVarEntry.Name] = $null
+        }
     }
 
     return $private:EnvVars
